@@ -287,40 +287,40 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
 					parentNode->left = currNode->left;
 					delete currNode;
 				}
-				else {
+				else { // If current node is the right node of parent the parents right pointer is set to current nodes left pointer
 					parentNode->right = currNode->left;
 					delete currNode;
 				}
 			}
-			else if (currNode->left == nullptr) {
-				if (parentNode == nullptr) {
+			else if (currNode->left == nullptr) { // If the node does not have a left child
+				if (parentNode == nullptr) { // If the parent node is null then the current node is the root and the root is set to the current nodes right child
 					root = currNode->right;
 					delete currNode;
 				}
-				else if (parentNode->right == currNode) {
+				else if (parentNode->right == currNode) { // If the current node is the right node of its parent the parents right pointer is set to current nodes right pointer
 					parentNode->right = currNode->right;
 					delete currNode;
 				}
-				else {
+				else { // If current node is the left node of parent the parents left pointer is set to current nodes right pointer
 					parentNode->left = currNode->right;
 					delete currNode;
 				}
 			}
 			else {
-				Node* successor = currNode->right;
-				while (successor->left != nullptr)
+				Node* successor = currNode->right; // Pointer to keep track of successor
+				while (successor->left != nullptr) // Finding the smallest successor node
 					successor = successor->left;
-				Bid successorBid = successor->bid;
-				currNode->bid = successor->bid;
-				currNode->right = removeNode(currNode->right, successorBid.bidId);
+				Bid successorBid = successor->bid; // Holding the successor bid in a Bid var
+				currNode->bid = successorBid; // Setting node to be deleted as the sucessor
+				currNode->right = removeNode(currNode->right, successorBid.bidId); // Deleting the successor node from its original position
 			}
 			return currNode;
 		}
-		else if (bidId < currNode->bid.bidId) {
+		else if (bidId < currNode->bid.bidId) { // If bidId is less than the current nodes bid the current node is set to the current nodes left child
 			parentNode = currNode;
 			currNode = currNode->left;
 		}
-		else {
+		else { // If bidId is not less than the current nodes bid the current node is set to the current nodes right child
 			parentNode = currNode;
 			currNode = currNode->right;
 		}
