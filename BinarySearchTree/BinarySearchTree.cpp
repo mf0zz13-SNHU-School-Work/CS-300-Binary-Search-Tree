@@ -255,78 +255,34 @@ void BinarySearchTree::preOrder(Node* node) {
  */
 Node* BinarySearchTree::removeNode(Node* node, string bidId) {
 
-	Node* currNode = node; // Pointer to current node
-	Node* parentNode = nullptr; // Pointer to parent node
-
-	// Quick exit if node passed is null
-	if (currNode == nullptr)
+	if (node == nullptr)
 		return node;
 
-	while (currNode != nullptr) {
-		if (currNode->bid.bidId == bidId) {
-			if (currNode->left == nullptr && currNode->right == nullptr) { // If the node does not have children
-				if (parentNode == nullptr) { // If the parent node is null then the current node is the root and the root pointer is set to null
-					root = nullptr;
-					delete currNode;
-				}
-				else if (parentNode->left == currNode) { // If the current node is the left node of its parent the parents left pointer is set to null
-					parentNode->left = nullptr;
-					delete currNode;
-				}
-				else if (parentNode->right == currNode) { // If the current node is the right node of its parent the parents right pointer is set to null
-					parentNode->right = nullptr;
-					delete currNode;
-				}
-			}
-			else if (currNode->right == nullptr) { // If the node does not have a right child
-				if (parentNode == nullptr) { // If the parent node is null then the current node is the root and the root is set to the current nodes left child
-					root = currNode->left;
-					delete currNode;
-				}
-				else if (parentNode->left == currNode) { // If the current node is the left node of its parent the parents left pointer is set to current nodes left pointer
-					parentNode->left = currNode->left;
-					delete currNode;
-				}
-				else { // If current node is the right node of parent the parents right pointer is set to current nodes left pointer
-					parentNode->right = currNode->left;
-					delete currNode;
-				}
-			}
-			else if (currNode->left == nullptr) { // If the node does not have a left child
-				if (parentNode == nullptr) { // If the parent node is null then the current node is the root and the root is set to the current nodes right child
-					root = currNode->right;
-					delete currNode;
-				}
-				else if (parentNode->right == currNode) { // If the current node is the right node of its parent the parents right pointer is set to current nodes right pointer
-					parentNode->right = currNode->right;
-					delete currNode;
-				}
-				else { // If current node is the left node of parent the parents left pointer is set to current nodes right pointer
-					parentNode->left = currNode->right;
-					delete currNode;
-				}
-			}
-			else {
-				Node* successor = currNode->right; // Pointer to keep track of successor
-				while (successor->left != nullptr) // Finding the smallest successor node
-					successor = successor->left;
-				Bid successorBid = successor->bid; // Holding the successor bid in a Bid var
-				currNode->bid = successorBid; // Setting node to be deleted as the sucessor
-				currNode->right = removeNode(currNode->right, successorBid.bidId); // Deleting the successor node from its original position
-			}
-			return node;
+	if (bidId < node->bid.bidId) // If BidId is less than node bidId set node left pointer to recursive call on left pointer
+		node->left = removeNode(node->left, bidId);
+	else if (bidId > node->bid.bidId) // If BidId is less than node bidId set node right pointer to recursive call on right pointer
+		node->right = removeNode(node->right, bidId);
+
+	else {
+		if (node->left == nullptr) { // If node left or both pointer null replace node with node at right pointer
+			Node* tempNode = node->right;
+			delete node;
+			return tempNode;
 		}
-		else if (bidId < currNode->bid.bidId) { // If bidId is less than the current nodes bid the current node is set to the current nodes left child
-			parentNode = currNode;
-			currNode = currNode->left;
+		else if (node->right == nullptr) { // If node right pointer null replace node with node at left pointer
+			Node* tempNode = node->left;
+			delete node;
+			return tempNode;
 		}
-		else { // If bidId is not less than the current nodes bid the current node is set to the current nodes right child
-			parentNode = currNode;
-			currNode = currNode->right;
+		else {
+			Node* successor = node->right; // Pointer to keep track of successor
+			while (successor->left != nullptr) // Finding the smallest successor node
+				successor = successor->left;
+			node->bid = successor->bid; // replacing bid with successor bid
+			node->right = removeNode(node->right, successor->bid.bidId); // Calling removeNode to remove successor bids original node
 		}
 	}
-	return nullptr;
-
+	return node;
 }
 
 
