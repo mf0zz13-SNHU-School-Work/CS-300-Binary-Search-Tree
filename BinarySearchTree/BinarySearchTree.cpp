@@ -314,7 +314,7 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
 				currNode->bid = successorBid; // Setting node to be deleted as the sucessor
 				currNode->right = removeNode(currNode->right, successorBid.bidId); // Deleting the successor node from its original position
 			}
-			return currNode;
+			return node;
 		}
 		else if (bidId < currNode->bid.bidId) { // If bidId is less than the current nodes bid the current node is set to the current nodes left child
 			parentNode = currNode;
